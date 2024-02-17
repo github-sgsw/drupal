@@ -1,0 +1,10 @@
+uuid: 005842c3-008f-445b-b6ed-6a5cf7a49537
+langcode: ja
+status: true
+dependencies: {  }
+id: text_list_item
+label: テキストリスト（子要素）
+icon_uuid: null
+icon_default: null
+description: ''
+behavior_plugins: {  }

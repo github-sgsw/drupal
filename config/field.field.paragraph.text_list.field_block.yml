@@ -1,0 +1,34 @@
+uuid: 073c9ead-b7d3-4853-a4c8-31b760714dea
+langcode: ja
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_block
+    - paragraphs.paragraphs_type.text_list
+    - paragraphs.paragraphs_type.text_list_item
+  module:
+    - entity_reference_revisions
+id: paragraph.text_list.field_block
+field_name: field_block
+entity_type: paragraph
+bundle: text_list
+label: ブロック
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    target_bundles:
+      text_list_item: text_list_item
+    negate: 0
+    target_bundles_drag_drop:
+      text_list:
+        weight: 3
+        enabled: false
+      text_list_item:
+        weight: 4
+        enabled: true
+field_type: entity_reference_revisions

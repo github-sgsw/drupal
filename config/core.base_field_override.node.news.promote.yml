@@ -1,0 +1,22 @@
+uuid: 22db0bf8-bcdb-4f75-a079-07859bbf7cd6
+langcode: ja
+status: true
+dependencies:
+  config:
+    - node.type.news
+id: node.news.promote
+field_name: promote
+entity_type: node
+bundle: news
+label: フロントページへ掲載
+description: ''
+required: false
+translatable: true
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: オン
+  off_label: オフ
+field_type: boolean

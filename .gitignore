@@ -1,0 +1,8 @@
+/.idea
+/web/modules/contrib
+/web/sites/default/files
+/vendor
+/mysql
+/dump/
+/web/core
+/gitLabToken

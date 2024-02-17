@@ -1,0 +1,13 @@
+uuid: eb9f2806-f85c-42df-9cc9-70321d989101
+langcode: ja
+status: true
+dependencies:
+  module:
+    - media
+_core:
+  default_config_hash: FrZy1tmuXJcOxhXlBoI1Hsnen5TT-9OCC1iolWH84go
+id: media_delete_action
+label: メディアを削除
+type: media
+plugin: 'entity:delete_action:media'
+configuration: {  }

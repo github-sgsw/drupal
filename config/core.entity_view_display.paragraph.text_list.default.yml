@@ -1,0 +1,33 @@
+uuid: 72f4efbd-b357-4597-9a6a-6e9981ff0a86
+langcode: ja
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.text_list.field_align
+    - field.field.paragraph.text_list.field_block
+    - paragraphs.paragraphs_type.text_list
+  module:
+    - entity_reference_revisions
+    - options
+id: paragraph.text_list.default
+targetEntityType: paragraph
+bundle: text_list
+mode: default
+content:
+  field_align:
+    type: list_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_block:
+    type: entity_reference_revisions_entity_view
+    label: above
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    weight: 1
+    region: content
+hidden: {  }

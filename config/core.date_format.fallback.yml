@@ -1,0 +1,10 @@
+uuid: 046d7a62-3d15-415e-91fc-637c48602feb
+langcode: ja
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: 7klS5IWXrwzVaPpYZFAs6wcx8U2FF1X73OfrtTsvuvE
+id: fallback
+label: 予備の日時フォーマット
+locked: true
+pattern: 'D, m/d/Y - H:i'

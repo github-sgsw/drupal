@@ -1,0 +1,31 @@
+services:
+  mysql:
+    image: mysql:8.0.33
+    volumes:
+      - ./mysql:/var/lib/mysql
+      - ./dump:/docker-entrypoint-initdb.d
+    environment:
+      MYSQL_ROOT_PASSWORD: 'root'
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+
+  drupal:
+    build:
+      context: ./
+      args:
+        USER_ID: ${DOCKER_UID}
+        GROUP_ID: ${DOCKER_GID}
+    volumes:
+      - ./web:/var/www/html
+      - ./config:/opt/drupal/config
+      - ./vendor:/opt/drupal/vendor
+      - ./composer.json:/opt/drupal/composer.json:rw
+      - ./composer.lock:/opt/drupal/composer.lock:rw
+      - ./.env:/opt/drupal/.env:rwF
+      - ./php.ini:/usr/local/etc/php/php.ini
+    command: "apache2-foreground"
+    ports:
+      - "80:80"
+    depends_on:
+      - mysql

@@ -1,0 +1,35 @@
+form_settings:
+  file:
+    default_value: false
+    disable: false
+    hidden: false
+  node:
+    default_value: true
+    disable: false
+    hidden: false
+  user:
+    default_value: false
+    disable: false
+    hidden: false
+  content_moderation_state:
+    default_value: true
+    disable: false
+    hidden: false
+  paragraph:
+    default_value: true
+    disable: false
+    hidden: false
+  media:
+    default_value: false
+    disable: false
+    hidden: false
+  path_alias:
+    default_value: false
+    disable: false
+    hidden: false
+  storage:
+    default_value: false
+    disable: false
+    hidden: false
+no_suffix: false
+take_ownership: false

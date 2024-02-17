@@ -1,0 +1,30 @@
+uuid: 51af14a3-33ec-48ec-9929-a949e55a6b77
+langcode: ja
+status: true
+dependencies:
+  module:
+    - options
+    - paragraphs
+id: paragraph.field_align
+field_name: field_align
+entity_type: paragraph
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: left
+      label: 左寄せ
+    -
+      value: right
+      label: 右寄せ
+    -
+      value: center
+      label: 中央寄せ
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

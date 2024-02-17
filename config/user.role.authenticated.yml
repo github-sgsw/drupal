@@ -1,0 +1,45 @@
+uuid: cc547142-24ba-47b1-8ccb-e8a74921c07c
+langcode: ja
+status: true
+dependencies:
+  module:
+    - config_translation
+    - content_moderation
+    - entity_clone_extras
+    - field_ui
+    - locale
+    - media
+    - node
+    - paragraphs
+    - storage
+    - system
+_core:
+  default_config_hash: dJ0L2DNSj5q6XVZAGsuVDpJTh5UeYkIPwKrUOOpr8YI
+id: authenticated
+label: 認証済みユーザー
+weight: 1
+is_admin: false
+permissions:
+  - 'access content'
+  - 'administer display modes'
+  - 'administer media display'
+  - 'administer media fields'
+  - 'administer media form display'
+  - 'administer node display'
+  - 'administer node fields'
+  - 'administer node form display'
+  - 'administer paragraph display'
+  - 'administer paragraph fields'
+  - 'administer paragraph form display'
+  - 'administer storage display'
+  - 'administer storage fields'
+  - 'administer storage form display'
+  - 'administer user display'
+  - 'administer user fields'
+  - 'administer user form display'
+  - 'clone news node entities'
+  - 'translate configuration'
+  - 'translate interface'
+  - 'view any unpublished content'
+  - 'view latest version'
+  - 'view media'

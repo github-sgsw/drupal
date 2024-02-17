@@ -1,0 +1,20 @@
+uuid: 5b08d820-e892-4fe3-8407-c4517c23bebf
+langcode: ja
+status: true
+dependencies:
+  theme:
+    - claro
+_core:
+  default_config_hash: CdXfDmRgAvms7EQovxxWPdYi0GitxeRbVtScYK16ZH0
+id: claro_local_actions
+theme: claro
+region: content
+weight: -10
+provider: null
+plugin: local_actions_block
+settings:
+  id: local_actions_block
+  label: プライマリ管理アクション
+  label_display: '0'
+  provider: core
+visibility: {  }
