@@ -1,0 +1,9 @@
+<?php
+
+/**
+ * Implements hook_preprocess().
+ */
+function node_choice_page_override_preprocess_table(&$variables, $hook) {
+  var_dump('aaaaaaaaaaaa');
+}
+

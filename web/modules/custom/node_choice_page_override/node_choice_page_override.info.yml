@@ -1,0 +1,4 @@
+name: Node Choice Page Override
+type: module
+description: 'ノードの言語選択画面で表示されるモデレーションがデフォルトのものしか表示されないため\nカスタムモデレーションでオーバーライドする'
+core_version_requirement: 10.x

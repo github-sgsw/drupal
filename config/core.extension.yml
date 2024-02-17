@@ -26,6 +26,7 @@ module:
   minimal: 0
   mysql: 0
   node: 0
+  node_choice_page_override: 0
   options: 0
   page_cache: 0
   path: 0
@@ -44,6 +45,7 @@ module:
   views: 10
   paragraphs: 11
 theme:
-  stark: 0
   claro: 0
+  stable9: 0
+  mytheme: 0
 profile: minimal

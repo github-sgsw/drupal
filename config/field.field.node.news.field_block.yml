@@ -5,6 +5,7 @@ dependencies:
   config:
     - field.storage.node.field_block
     - node.type.news
+    - paragraphs.paragraphs_type.heading
     - paragraphs.paragraphs_type.text_list
   module:
     - entity_reference_revisions
@@ -23,8 +24,12 @@ settings:
   handler_settings:
     target_bundles:
       text_list: text_list
+      heading: heading
     negate: 0
     target_bundles_drag_drop:
+      heading:
+        weight: 4
+        enabled: true
       text_list:
         weight: 3
         enabled: true

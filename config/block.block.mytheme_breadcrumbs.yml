@@ -1,0 +1,22 @@
+uuid: 46a4b6db-5d1a-4218-93be-ec494e701256
+langcode: ja
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - mytheme
+_core:
+  default_config_hash: NjcxOBrPOiK5-38t56DwFBDVY4yer7YSlbRWXFuHe7A
+id: mytheme_breadcrumbs
+theme: mytheme
+region: breadcrumb
+weight: 0
+provider: null
+plugin: system_breadcrumb_block
+settings:
+  id: system_breadcrumb_block
+  label: パンくず
+  label_display: '0'
+  provider: system
+visibility: {  }

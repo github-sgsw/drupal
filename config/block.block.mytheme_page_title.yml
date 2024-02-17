@@ -1,0 +1,20 @@
+uuid: 51f50685-9130-4ac1-b503-7c1103f43e8b
+langcode: ja
+status: true
+dependencies:
+  theme:
+    - mytheme
+_core:
+  default_config_hash: fNwDdW063tk_ktzSWzZVeQS9wzvLooVO280BQ9WrsIs
+id: mytheme_page_title
+theme: mytheme
+region: header
+weight: -30
+provider: null
+plugin: page_title_block
+settings:
+  id: page_title_block
+  label: ページのタイトル
+  label_display: '0'
+  provider: core
+visibility: {  }

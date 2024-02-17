@@ -2,7 +2,7 @@ _core:
   default_config_hash: l58O_yEXSo-SeJi19LXdzTU1tNJG3lmnIhCitRkM1tk
 langcode: ja
 uuid: 899ab9cc-ec81-4c16-bafc-cc3fc22a2599
-name: test
+name: demo_drupal
 mail: test@example.com
 slogan: ''
 page:

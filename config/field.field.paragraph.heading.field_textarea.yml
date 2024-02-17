@@ -1,0 +1,19 @@
+uuid: 7743f844-65a5-4a03-89de-ce681b61dd25
+langcode: ja
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_textarea
+    - paragraphs.paragraphs_type.heading
+id: paragraph.heading.field_textarea
+field_name: field_textarea
+entity_type: paragraph
+bundle: heading
+label: テキスト
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string_long

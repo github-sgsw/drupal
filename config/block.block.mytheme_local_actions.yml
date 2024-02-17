@@ -1,0 +1,20 @@
+uuid: 5ab4289a-256d-476e-a515-21fc62db28ca
+langcode: ja
+status: true
+dependencies:
+  theme:
+    - mytheme
+_core:
+  default_config_hash: CdXfDmRgAvms7EQovxxWPdYi0GitxeRbVtScYK16ZH0
+id: mytheme_local_actions
+theme: mytheme
+region: content
+weight: -10
+provider: null
+plugin: local_actions_block
+settings:
+  id: local_actions_block
+  label: プライマリ管理アクション
+  label_display: '0'
+  provider: core
+visibility: {  }
