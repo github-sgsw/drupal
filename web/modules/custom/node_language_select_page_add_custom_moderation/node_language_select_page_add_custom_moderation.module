@@ -1,0 +1,78 @@
+<?php
+
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\node\Entity\Node;
+
+/**
+ * Implements hook_preprocess().
+ *
+ * @link https://api.drupal.org/api/drupal/core!lib!Drupal!Core!Render!theme.api.php/function/hook_preprocess_HOOK/10
+ * @description 公開・非公開しか表示されないため、カスタムモデレーションの状態を表示できるようにカラムを追加する
+ */
+
+function node_language_select_page_add_custom_moderation_preprocess_table(&$variables):void {
+
+  $current_path = Drupal::service('path.current')->getPath();
+  if (preg_match('/^(?:\/en|)\/node\/(\d+)\/translations$/', $current_path, $matches) === 1) {
+    // 公開・非公開の右にカスタムモデレーションのカラムを追加するため要素のキーを保持
+    $add_array_index = 0;
+
+    /*
+     * thの名称の日本語訳がおかしいため書き換える。管理画面の話なので直で日本語を入れる。
+     * 状態 -> 公開
+     * 翻訳 -> タイトル
+    */
+    foreach ($variables['header'] as $index => $th) {
+      /** @var \Drupal\Core\StringTranslation\TranslatableMarkup $th_value */
+      $th_class = $th["content"];
+
+      if ($th_class->getUntranslatedString() == 'Status') {
+        $overrideClass = new TranslatableMarkup('公開');
+        $th["content"] = $overrideClass;
+        $add_th_custom_moderation = [
+          [
+            'tag' => 'th',
+            'attributes' => new \Drupal\Core\Template\Attribute(),
+            'content' => new TranslatableMarkup('状態')
+          ]
+        ];
+
+        $add_array_index = $index + 1;
+        array_splice($variables['header'], $add_array_index, 0, $add_th_custom_moderation);
+      }
+      if ($th_class == 'Translation') {
+        $overrideClass = new TranslatableMarkup('タイトル');
+        $th["content"] = $overrideClass;
+      }
+    }
+
+    /*
+     * パスからnidを取得してノードをロード
+     * カスタムモデレーションのラベルセットして配列に追加
+    */
+
+    foreach (array_map(null, $variables['rows'], Drupal::languageManager()->getLanguages()) as $index => [$tr, $language]) {
+      $node = Node::load($matches[1]);
+        $node_status = $node->hasTranslation($language->getId()) ?
+          $node->getTranslation($language->getId())->get('moderation_state')->getString() : 'Not translated';
+
+      $add_td_custom_moderation = [
+        [
+          'tag' => 'td',
+          'attributes' => new \Drupal\Core\Template\Attribute(),
+          'content' => [
+            '#type' => 'inline_template',
+            '#template' => '<span class="status">'.t($node_status).'</span>{% if outdated %} <span class="marker">{{ "outdated"|t }}</span>{% endif %}',
+          ],
+          '#context' => [
+            'status' => false,
+            'outdated' => false
+          ]
+        ]
+      ];
+
+      array_splice($variables['rows'][$index]['cells'], $add_array_index, 0, $add_td_custom_moderation);
+
+    }
+  }
+}
