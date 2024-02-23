@@ -16,11 +16,6 @@ type_settings:
       weight: 0
       published: false
       default_revision: false
-    orverride_draft:
-      label: 'orverride draft'
-      weight: 4
-      published: false
-      default_revision: true
     pending_approval:
       label: pending_approval
       weight: 2
@@ -31,6 +26,11 @@ type_settings:
       weight: 1
       published: true
       default_revision: true
+    reject_approval:
+      label: reject_approval
+      weight: 6
+      published: false
+      default_revision: false
     un_published:
       label: 'un published'
       weight: 5
@@ -38,46 +38,41 @@ type_settings:
       default_revision: true
   transitions:
     default_draft:
-      label: 'default draft'
+      label: draft
       from:
         - draft
-        - orverride_draft
         - pending_approval
         - published
+        - reject_approval
         - un_published
       to: draft
       weight: 4
-    orverride_draft:
-      label: 'orverride draft'
-      from:
-        - draft
-        - orverride_draft
-        - published
-        - un_published
-      to: orverride_draft
-      weight: 2
     pending_approval:
       label: pending_approval
       from:
         - draft
-        - orverride_draft
+        - reject_approval
       to: pending_approval
       weight: 5
     published:
       label: published
       from:
         - draft
-        - orverride_draft
         - pending_approval
         - published
         - un_published
       to: published
       weight: 0
+    reject_approval:
+      label: reject_approval
+      from:
+        - pending_approval
+      to: reject_approval
+      weight: 6
     un_published:
       label: 'un published'
       from:
         - draft
-        - orverride_draft
         - published
       to: un_published
       weight: 1

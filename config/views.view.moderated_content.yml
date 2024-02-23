@@ -2,7 +2,10 @@ uuid: b535c7db-6792-4fa5-8a79-24777c02e631
 langcode: ja
 status: true
 dependencies:
+  config:
+    - workflows.workflow.base_workflow
   module:
+    - content_moderation
     - node
     - user
   enforced:
@@ -684,9 +687,11 @@ display:
           admin_label: ''
           entity_type: node
           plugin_id: moderation_state_filter
-          operator: 'not in'
+          operator: in
           value:
-            editorial-published: editorial-published
+            base_workflow-draft: base_workflow-draft
+            base_workflow-pending_approval: base_workflow-pending_approval
+            base_workflow-reject_approval: base_workflow-reject_approval
           group: 1
           exposed: false
           expose:
@@ -820,7 +825,8 @@ display:
         - url.query_args
         - 'user.node_grants:view'
         - user.permissions
-      tags: {  }
+      tags:
+        - 'config:workflow_list'
   moderated_content:
     id: moderated_content
     display_title: モデレート中のコンテンツ
@@ -839,4 +845,5 @@ display:
         - url.query_args
         - 'user.node_grants:view'
         - user.permissions
-      tags: {  }
+      tags:
+        - 'config:workflow_list'

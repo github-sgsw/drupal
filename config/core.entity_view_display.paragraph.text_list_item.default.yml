@@ -3,13 +3,37 @@ langcode: ja
 status: true
 dependencies:
   config:
+    - field.field.paragraph.text_list_item.field_link
+    - field.field.paragraph.text_list_item.field_target
     - field.field.paragraph.text_list_item.field_text
     - paragraphs.paragraphs_type.text_list_item
+  module:
+    - link
+    - options
 id: paragraph.text_list_item.default
 targetEntityType: paragraph
 bundle: text_list_item
 mode: default
 content:
+  field_link:
+    type: link
+    label: above
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_target:
+    type: list_default
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: 2
+    region: content
   field_text:
     type: string
     label: above

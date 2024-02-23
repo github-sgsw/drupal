@@ -2,6 +2,7 @@
 
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\node\Entity\Node;
+use  Drupal\Core\Entity\EntityRepository;
 
 /**
  * Implements hook_preprocess().
@@ -13,7 +14,7 @@ use Drupal\node\Entity\Node;
 function node_language_select_page_add_custom_moderation_preprocess_table(&$variables):void {
 
   $current_path = Drupal::service('path.current')->getPath();
-  if (preg_match('/^(?:\/en|)\/node\/(\d+)\/translations$/', $current_path, $matches) === 1) {
+  if (preg_match('/^(?:\/en|)\/node\/(\d+)\/translations(?:|\?.+)$/', $current_path, $matches) === 1) {
     // 公開・非公開の右にカスタムモデレーションのカラムを追加するため要素のキーを保持
     $add_array_index = 0;
 
@@ -52,9 +53,19 @@ function node_language_select_page_add_custom_moderation_preprocess_table(&$vari
     */
 
     foreach (array_map(null, $variables['rows'], Drupal::languageManager()->getLanguages()) as $index => [$tr, $language]) {
+      $node_status = 'Not translated';
       $node = Node::load($matches[1]);
-        $node_status = $node->hasTranslation($language->getId()) ?
-          $node->getTranslation($language->getId())->get('moderation_state')->getString() : 'Not translated';
+
+      if ($node->hasTranslation($language->getId())) {
+        $vid = Drupal::entityTypeManager()
+          ->getStorage('node')
+          ->getLatestRevisionId($matches[1]);
+
+        $node_status = Drupal::entityTypeManager()
+          ->getStorage('node')
+          ->loadRevision($vid)
+          ->get('moderation_state')->getString();
+      }
 
       $add_td_custom_moderation = [
         [

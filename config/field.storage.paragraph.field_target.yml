@@ -1,0 +1,30 @@
+uuid: 18c5d841-5575-4c88-b650-53e1ac3648d9
+langcode: ja
+status: true
+dependencies:
+  module:
+    - options
+    - paragraphs
+id: paragraph.field_target
+field_name: field_target
+entity_type: paragraph
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: _self
+      label: 同窓
+    -
+      value: _blank
+      label: 別窓
+    -
+      value: pdf
+      label: PDF
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false
