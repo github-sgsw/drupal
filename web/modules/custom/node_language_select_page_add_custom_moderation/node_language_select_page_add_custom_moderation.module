@@ -15,7 +15,9 @@ function node_language_select_page_add_custom_moderation_preprocess_table(&$vari
 
   $current_path = Drupal::service('path.current')->getPath();
   if (preg_match('/^(?:\/en|)\/node\/(\d+)\/translations(?:|\?.+)$/', $current_path, $matches) === 1) {
-    // 公開・非公開の右にカスタムモデレーションのカラムを追加するため要素のキーを保持
+    // 公開・非公開ラベルのカラムキーを保持 $published_cell_index
+    // 公開・非公開の右にカスタムモデレーションのカラムを追加するため要素のキーを保持 $add_array_index
+    $published_cell_index = 0;
     $add_array_index = 0;
 
     /*
@@ -24,12 +26,14 @@ function node_language_select_page_add_custom_moderation_preprocess_table(&$vari
      * 翻訳 -> タイトル
     */
     foreach ($variables['header'] as $index => $th) {
-      /** @var \Drupal\Core\StringTranslation\TranslatableMarkup $th_value */
+      /** @var \Drupal\Core\StringTranslation\TranslatableMarkup $th_class */
       $th_class = $th["content"];
 
       if ($th_class->getUntranslatedString() == 'Status') {
+        $published_cell_index = $index;
         $overrideClass = new TranslatableMarkup('公開');
-        $th["content"] = $overrideClass;
+        $variables['header'][$published_cell_index]["content"] = $overrideClass;
+
         $add_th_custom_moderation = [
           [
             'tag' => 'th',
@@ -37,13 +41,12 @@ function node_language_select_page_add_custom_moderation_preprocess_table(&$vari
             'content' => new TranslatableMarkup('状態')
           ]
         ];
-
         $add_array_index = $index + 1;
         array_splice($variables['header'], $add_array_index, 0, $add_th_custom_moderation);
       }
-      if ($th_class == 'Translation') {
+      if ($th_class->getUntranslatedString() == 'Translation') {
         $overrideClass = new TranslatableMarkup('タイトル');
-        $th["content"] = $overrideClass;
+        $variables['header'][$index]["content"] = $overrideClass;
       }
     }
 
@@ -53,20 +56,56 @@ function node_language_select_page_add_custom_moderation_preprocess_table(&$vari
     */
 
     foreach (array_map(null, $variables['rows'], Drupal::languageManager()->getLanguages()) as $index => [$tr, $language]) {
+      $entity = Drupal::routeMatch()->getParameter('node');
       $node_status = 'Not translated';
-      $node = Node::load($matches[1]);
 
-      if ($node->hasTranslation($language->getId())) {
-        $vid = Drupal::entityTypeManager()
-          ->getStorage('node')
-          ->getLatestRevisionId($matches[1]);
+      $default_node = Node::load($matches[1]);
 
-        $node_status = Drupal::entityTypeManager()
-          ->getStorage('node')
-          ->loadRevision($vid)
-          ->get('moderation_state')->getString();
+      if ($default_node?->hasTranslation($language->getId())) {
+
+        /*
+         * 最新リビジョンのモデレーションステータスを見て公開・非公開を表示させているため
+         * デフォルトリビジョンの公開・非公開を取得し、上書きする
+        */
+        $default_node = $default_node->getTranslation($language->getId());
+        /** @var \Drupal\Core\StringTranslation\TranslatableMarkup $add_td_custom_moderation */
+        $published_cell_td = [
+            'tag' => 'td',
+            'attributes' => new \Drupal\Core\Template\Attribute(),
+            'content' => [
+              '#type' => 'inline_template',
+              '#template' => '<span class="status">{% if status %}{{ "Published"|t }}{% else %}{{ "Not published"|t }}{% endif %}</span>{% if outdated %}<span class="marker">{{ "outdated"|t }}</span>{% endif %}',
+              '#context' => [
+                'status' => $default_node->isPublished(),
+                'outdated' => FALSE
+              ]
+            ]
+        ];
+
+        $variables['rows'][$index]['cells'][$published_cell_index] = $published_cell_td;
+
+        /*
+         * 最新リビジョンのステータスを取得し
+         * $variables['header']に追加したカラムに入れる
+        */
+
+        $storage = Drupal::service('entity_type.manager')->getStorage('node');
+        $latest_vid = $storage->getLatestTranslationAffectedRevisionId($matches[1], $language->getId());
+        $latest_revision_node = $storage->loadRevision($latest_vid);
+
+        $node_status = $latest_revision_node->getTranslation($language->getId())->get('moderation_state')->getString();
+
+//        $vid = Drupal::entityTypeManager()
+//          ->getStorage('node')
+//          ->getLatestRevisionId($matches[1]);
+//
+//        $node_status = Drupal::entityTypeManager()
+//          ->getStorage('node')
+//          ->loadRevision($vid)
+//          ->get('moderation_state')->getString();
       }
 
+      /** @var \Drupal\Core\StringTranslation\TranslatableMarkup $add_td_custom_moderation */
       $add_td_custom_moderation = [
         [
           'tag' => 'td',
@@ -74,10 +113,10 @@ function node_language_select_page_add_custom_moderation_preprocess_table(&$vari
           'content' => [
             '#type' => 'inline_template',
             '#template' => '<span class="status">'.t($node_status).'</span>{% if outdated %} <span class="marker">{{ "outdated"|t }}</span>{% endif %}',
-          ],
-          '#context' => [
-            'status' => false,
-            'outdated' => false
+            '#context' => [
+              'status' => false,
+              'outdated' => false
+            ]
           ]
         ]
       ];
