@@ -1,0 +1,20 @@
+uuid: 1215e515-5fd9-4e31-872e-faa1eb2e0962
+langcode: ja
+status: true
+dependencies:
+  module:
+    - custom_block
+  theme:
+    - mytheme
+id: hello_custom_block
+theme: mytheme
+region: content
+weight: 0
+provider: null
+plugin: hello_custom_block
+settings:
+  id: hello_custom_block
+  label: 'Hello Custom Block Label'
+  label_display: visible
+  provider: custom_block
+visibility: {  }
