@@ -7,6 +7,7 @@ dependencies:
     - field.field.node.news.field_block
     - field.field.node.news.field_date
     - field.field.node.news.field_link
+    - field.field.node.news.field_news_file
     - node.type.news
   module:
     - user
@@ -29,4 +30,5 @@ hidden:
   field_block: true
   field_date: true
   field_link: true
+  field_news_file: true
   langcode: true

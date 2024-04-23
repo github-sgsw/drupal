@@ -6,6 +6,7 @@ dependencies:
     - field.field.node.news.field_block
     - field.field.node.news.field_date
     - field.field.node.news.field_link
+    - field.field.node.news.field_news_file
     - node.type.news
   module:
     - datetime
@@ -51,6 +52,14 @@ content:
       target: ''
     third_party_settings: {  }
     weight: 103
+    region: content
+  field_news_file:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 105
     region: content
   links:
     settings: {  }
