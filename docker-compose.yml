@@ -18,6 +18,7 @@ services:
         GROUP_ID: ${DOCKER_GID}
     volumes:
       - ./web:/var/www/html
+      - ./private:/opt/drupal/private
       - ./config:/opt/drupal/config
       - ./vendor:/opt/drupal/vendor
       - ./composer.json:/opt/drupal/composer.json:rw
