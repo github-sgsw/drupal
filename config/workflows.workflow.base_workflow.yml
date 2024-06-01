@@ -3,6 +3,7 @@ langcode: ja
 status: true
 dependencies:
   config:
+    - media.type.file
     - node.type.news
   module:
     - content_moderation
@@ -77,6 +78,8 @@ type_settings:
       to: un_published
       weight: 1
   entity_types:
+    media:
+      - file
     node:
       - news
   default_moderation_state: draft
