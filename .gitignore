@@ -3,7 +3,7 @@
 /web/sites/default/files
 /vendor
 /mysql
-/dump/
+/dump
 /web/core
 /gitLabToken
-/private/
+/private
