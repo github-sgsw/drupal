@@ -5,7 +5,9 @@ module:
   block: 0
   breakpoint: 0
   config_translation: 0
+  content_change_status_send_mail: 0
   content_moderation: 0
+  custom_block: 0
   datetime: 0
   dblog: 0
   dynamic_page_cache: 0

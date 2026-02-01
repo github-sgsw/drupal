@@ -9,6 +9,8 @@ services:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - '3301:3306'
 
   drupal:
     build:
@@ -18,6 +20,7 @@ services:
         GROUP_ID: ${DOCKER_GID}
     volumes:
       - ./web:/var/www/html
+      - ./private:/opt/drupal/private
       - ./config:/opt/drupal/config
       - ./vendor:/opt/drupal/vendor
       - ./composer.json:/opt/drupal/composer.json:rw

@@ -1,0 +1,4 @@
+name: Custom Block
+type: module
+description: 'ブロックをお試しで作成してみる'
+core_version_requirement: 10.x

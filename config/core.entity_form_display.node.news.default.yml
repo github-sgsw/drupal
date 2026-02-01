@@ -6,12 +6,14 @@ dependencies:
     - field.field.node.news.field_block
     - field.field.node.news.field_date
     - field.field.node.news.field_link
+    - field.field.node.news.field_news_file
     - node.type.news
     - workflows.workflow.base_workflow
   module:
     - content_moderation
     - datetime
     - link
+    - media_library
     - paragraphs
     - path
 id: node.news.default
@@ -21,7 +23,7 @@ mode: default
 content:
   field_block:
     type: paragraphs
-    weight: 4
+    weight: 5
     region: content
     settings:
       title: Paragraph
@@ -41,34 +43,41 @@ content:
     third_party_settings: {  }
   field_date:
     type: datetime_default
-    weight: 2
+    weight: 1
     region: content
     settings: {  }
     third_party_settings: {  }
   field_link:
     type: link_default
-    weight: 3
+    weight: 2
     region: content
     settings:
       placeholder_url: ''
       placeholder_title: ''
     third_party_settings: {  }
+  field_news_file:
+    type: media_library_widget
+    weight: 3
+    region: content
+    settings:
+      media_types: {  }
+    third_party_settings: {  }
   langcode:
     type: language_select
-    weight: 5
+    weight: 6
     region: content
     settings:
       include_locked: false
     third_party_settings: {  }
   moderation_state:
     type: moderation_state_default
-    weight: 6
+    weight: 7
     region: content
     settings: {  }
     third_party_settings: {  }
   path:
     type: path
-    weight: 1
+    weight: 4
     region: content
     settings: {  }
     third_party_settings: {  }

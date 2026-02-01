@@ -82,4 +82,12 @@
 
   {{ content.field_block }}
 
+<div>
+  <p>ブロックレイアウトで登録して埋め込み</p>
+</div>
+  {{ drupal_block('hello_custom_block') }}
+  <div>
+    <p>ブロックレイアウトで登録せずに埋め込み</p>
+  </div>
+  {{ drupal_block('bay_custom_block') }}
 </article>

@@ -1,0 +1,4 @@
+name: Content Change Status Send Mail
+type: module
+description: 'コンテンツのステータスが変更されたらメール送信する'
+core_version_requirement: 10.x

@@ -1,0 +1,16 @@
+<?php
+
+/**
+ * Implements hook_theme().
+ */
+function custom_block_theme(): array {
+  return [
+    'custom_block' => [
+      'variables' => [
+        'active_tab' => NULL,
+        'body_text' => NULL,
+        'tabs' => [],
+      ],
+    ],
+  ];
+}
