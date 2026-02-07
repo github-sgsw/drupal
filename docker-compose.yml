@@ -1,11 +1,13 @@
 services:
   mysql:
     image: mysql:8.0.33
+    container_name: drupal_mysql
+    command: --skip-log-bin --log-bin-trust-function-creators=1
     volumes:
-      - ./mysql:/var/lib/mysql
+      - db_data:/var/lib/mysql
       - ./dump:/docker-entrypoint-initdb.d
     environment:
-      MYSQL_ROOT_PASSWORD: 'root'
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
@@ -15,11 +17,11 @@ services:
   drupal:
     build:
       context: ./
-      args:
-        USER_ID: ${DOCKER_UID}
-        GROUP_ID: ${DOCKER_GID}
+    container_name: drupal_app
     volumes:
-      - ./web:/var/www/html
+      - ./web/themes:/var/www/html/themes
+      - ./web/modules:/var/www/html/modules
+      - ./web/sites:/var/www/html/sites
       - ./private:/opt/drupal/private
       - ./config:/opt/drupal/config
       - ./vendor:/opt/drupal/vendor
@@ -32,3 +34,26 @@ services:
       - "80:80"
     depends_on:
       - mysql
+
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: drupal_mailpit
+    restart: unless-stopped
+    volumes:
+      - mail_date:/data
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+    environment:
+      MP_MAX_MESSAGES: 5000
+      MP_DATABASE: /data/mailpit.db
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+      TZ: Asia/Tokyo
+
+volumes:
+  db_data:
+    name: drupal-mysql-volume
+  mail_date:
+    name: drupal-mailpit-volume
+
