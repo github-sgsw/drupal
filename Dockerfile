@@ -1,4 +1,4 @@
-FROM drupal:10.2.3-php8.3-apache
+FROM drupal:11.3.3-php8.5-apache
 
 ARG USER_ID=1000
 ARG GROUP_ID=1000
