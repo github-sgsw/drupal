@@ -15,11 +15,13 @@
         }
     ],
     "require": {
+        "chi-teck/drupal-code-generator": "^4@alpha",
         "composer/installers": "^2.0",
-        "drupal/core-composer-scaffold": "10.3.0",
-        "drupal/core-project-message": "10.3.0",
-        "drupal/core-recommended": "10.3.0",
-        "drush/drush": "^13.6"
+        "drupal/core-composer-scaffold": "11.3.3",
+        "drupal/core-project-message": "11.3.3",
+        "drupal/core-recommended": "11.3.3",
+        "drush/drush": "^13.6",
+        "symfony/console": "^7"
     },
     "conflict": {
         "drupal/drupal": "*"
