@@ -3,9 +3,9 @@ _core:
 langcode: ja
 first_day: 0
 country:
-  default: JP
+  default: ''
 timezone:
-  default: Asia/Tokyo
+  default: UTC
   user:
     configurable: true
     default: 0

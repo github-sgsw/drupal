@@ -1,9 +1,8 @@
-uuid: 496bc330-e604-4495-8ee7-d728a46caed9
+uuid: ceef42fc-b367-4728-9b1b-e174f6fdde8c
 langcode: ja
 status: true
 dependencies:
   module:
-    - media
     - system
 _core:
   default_config_hash: j5zLMOdJBqC0bMvSdth5UebkprJB8g_2FXHqhfpJzow
@@ -13,4 +12,3 @@ weight: 0
 is_admin: false
 permissions:
   - 'access content'
-  - 'view media'

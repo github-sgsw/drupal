@@ -1,10 +1,10 @@
-uuid: e12f62b0-3dca-4c93-b80c-2435e7e8b1f8
+uuid: 473ea095-9abf-4307-b7cf-145323fe6907
 langcode: ja
 status: true
 dependencies: {  }
 _core:
   default_config_hash: AlzeyytA8InBgxIG9H2UDJYs3CG98Zj6yRsDKmlbZwA
 id: short
-label: 'Default short date'
+label: デフォルトの短い日付
 locked: false
 pattern: 'Y/m/d - H:i'

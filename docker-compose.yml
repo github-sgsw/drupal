@@ -28,7 +28,6 @@ services:
       - ./composer.json:/opt/drupal/composer.json:rw
       - ./composer.lock:/opt/drupal/composer.lock:rw
       - ./.env:/opt/drupal/.env:rwF
-      - ./php.ini:/usr/local/etc/php/php.ini
     command: "apache2-foreground"
     ports:
       - "80:80"
@@ -40,7 +39,7 @@ services:
     container_name: drupal_mailpit
     restart: unless-stopped
     volumes:
-      - mail_date:/data
+      - mail_data:/data
     ports:
       - "8025:8025"
       - "1025:1025"
@@ -54,6 +53,6 @@ services:
 volumes:
   db_data:
     name: drupal-mysql-volume
-  mail_date:
+  mail_data:
     name: drupal-mailpit-volume
 

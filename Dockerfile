@@ -34,6 +34,7 @@ ENV PATH=${PATH}:/opt/drupal/vendor/bin
 
 # Mailpitコンテナにメール送信できるようにするため mailpit sendmail コマンドのインストール
 RUN curl -sL https://raw.githubusercontent.com/axllent/mailpit/develop/install.sh | bash
+RUN touch /usr/local/etc/php/conf.d/custom.ini
 
 # MTA設定
 RUN echo "sendmail_path = /usr/local/bin/mailpit sendmail -S mailpit:1025" >> /usr/local/etc/php/conf.d/custom.ini
