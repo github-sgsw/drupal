@@ -20,6 +20,9 @@
         "drupal/core-composer-scaffold": "11.3.3",
         "drupal/core-project-message": "11.3.3",
         "drupal/core-recommended": "11.3.3",
+        "drupal/gin": "^5.0",
+        "drupal/twig_tweak": "^3.4",
+        "drupal/upgrade_status": "^4.3",
         "drush/drush": "^13.6",
         "symfony/console": "^7"
     },
