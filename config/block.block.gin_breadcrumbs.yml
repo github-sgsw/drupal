@@ -1,5 +1,5 @@
 uuid: f6cd5caa-7ec3-4ea0-914e-34880f3b9a12
-langcode: en
+langcode: ja
 status: true
 dependencies:
   module:
@@ -16,7 +16,7 @@ provider: null
 plugin: system_breadcrumb_block
 settings:
   id: system_breadcrumb_block
-  label: Breadcrumbs
+  label: パンくず
   label_display: '0'
   provider: system
 visibility: {  }
