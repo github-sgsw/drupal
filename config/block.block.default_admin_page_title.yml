@@ -1,13 +1,13 @@
-uuid: 5c9e21b5-68d0-4caf-9c76-2b2d53e0956e
+uuid: 2273bf4e-4c10-4f4c-a438-e3d417fdd9da
 langcode: ja
 status: true
 dependencies:
   theme:
-    - claro
+    - default_admin
 _core:
-  default_config_hash: fNwDdW063tk_ktzSWzZVeQS9wzvLooVO280BQ9WrsIs
-id: claro_page_title
-theme: claro
+  default_config_hash: CaTkocqIGci5JCxUVHC6mwT3he3MSfhVvucVivgebdI
+id: default_admin_page_title
+theme: default_admin
 region: header
 weight: -30
 provider: null

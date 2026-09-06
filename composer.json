@@ -20,7 +20,6 @@
         "drupal/core-composer-scaffold": "11.4.6",
         "drupal/core-project-message": "11.4.6",
         "drupal/core-recommended": "11.4.6",
-        "drupal/gin": "^5.0",
         "drupal/twig_tweak": "^3.4",
         "drupal/upgrade_status": "^4.3",
         "drush/drush": "^13.6",
