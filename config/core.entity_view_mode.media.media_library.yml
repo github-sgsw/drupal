@@ -1,0 +1,16 @@
+uuid: 85ca4fee-1a61-4f25-80f0-7c4b160d5906
+langcode: ja
+status: true
+dependencies:
+  module:
+    - media
+  enforced:
+    module:
+      - media_library
+_core:
+  default_config_hash: 04_dAqpWYP1WmsXZ7IXJ7-yarCvNddD10EUkBDtIFy4
+id: media.media_library
+label: メディアライブラリー
+description: ''
+targetEntityType: media
+cache: true

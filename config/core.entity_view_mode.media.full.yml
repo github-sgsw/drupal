@@ -1,0 +1,13 @@
+uuid: 75decfd2-f216-4941-a0ac-f9a9dceafa1f
+langcode: ja
+status: false
+dependencies:
+  module:
+    - media
+_core:
+  default_config_hash: dTfAUHooYV0uOVPO3saGpgv-c5PppJXDwxvwRTJOycM
+id: media.full
+label: 全文
+description: ''
+targetEntityType: media
+cache: true

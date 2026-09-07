@@ -1,0 +1,13 @@
+uuid: 712e0601-7004-4f3c-a31e-2bb0fa2fc06e
+langcode: ja
+status: true
+dependencies:
+  module:
+    - media
+_core:
+  default_config_hash: CsK6TseQ2DatEbZgbd30swOlZ28_HHwAESU2LvEnWq0
+id: media_unpublish_action
+label: メディアを非掲載
+type: media
+plugin: 'entity:unpublish_action:media'
+configuration: {  }
