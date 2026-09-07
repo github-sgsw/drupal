@@ -1,0 +1,16 @@
+uuid: 9808e6aa-478c-44ab-adf4-560674d35df2
+langcode: ja
+status: true
+dependencies:
+  config:
+    - node.type.news
+  module:
+    - content_translation
+third_party_settings:
+  content_translation:
+    enabled: true
+id: node.news
+target_entity_type_id: node
+target_bundle: news
+default_langcode: site_default
+language_alterable: true

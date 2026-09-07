@@ -1,0 +1,19 @@
+uuid: a3ba3cb5-5c37-449e-ae2f-4fccb1a0bdc9
+langcode: ja
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_date
+    - node.type.news
+id: node.news.field_date
+field_name: field_date
+entity_type: node
+bundle: news
+label: 日付
+description: ''
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: timestamp

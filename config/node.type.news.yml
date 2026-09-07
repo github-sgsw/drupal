@@ -1,0 +1,11 @@
+uuid: 1c14df62-2a3e-4d7a-926a-12982c181f7a
+langcode: ja
+status: true
+dependencies: {  }
+name: ニュース
+type: news
+description: null
+help: null
+new_revision: true
+preview_mode: 1
+display_submitted: true

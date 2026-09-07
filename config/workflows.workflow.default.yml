@@ -1,0 +1,82 @@
+uuid: e8accbde-35c8-4956-9182-81728cc84ea3
+langcode: ja
+status: true
+dependencies:
+  config:
+    - node.type.news
+  module:
+    - content_moderation
+id: default
+label: デフォルト
+type: content_moderation
+type_settings:
+  states:
+    draft:
+      label: 一時保存
+      weight: 0
+      published: false
+      default_revision: false
+    pending_approval:
+      label: 承認待ち
+      weight: 3
+      published: false
+      default_revision: false
+    published:
+      label: 公開
+      weight: 1
+      published: true
+      default_revision: true
+    reject:
+      label: 差し戻し
+      weight: 4
+      published: false
+      default_revision: false
+    unpublished:
+      label: 非公開
+      weight: 2
+      published: false
+      default_revision: true
+  transitions:
+    create_new_draft:
+      label: 一時保存
+      from:
+        - draft
+        - published
+        - unpublished
+      to: draft
+      weight: 0
+    pending_approval:
+      label: 承認待ち
+      from:
+        - draft
+        - published
+        - reject
+        - unpublished
+      to: pending_approval
+      weight: 3
+    publish:
+      label: 公開
+      from:
+        - draft
+        - pending_approval
+        - published
+      to: published
+      weight: 1
+    reject:
+      label: 差し戻し
+      from:
+        - pending_approval
+      to: reject
+      weight: 4
+    unpublish:
+      label: 非公開
+      from:
+        - draft
+        - published
+        - unpublished
+      to: unpublished
+      weight: 2
+  entity_types:
+    node:
+      - news
+  default_moderation_state: draft
