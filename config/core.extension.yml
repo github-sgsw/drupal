@@ -20,6 +20,5 @@ module:
   minimal: 1000
 theme:
   stark: 0
-  gin: 0
   default_admin: 0
 profile: minimal
