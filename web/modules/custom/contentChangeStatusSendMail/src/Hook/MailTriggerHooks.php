@@ -4,6 +4,7 @@ namespace Drupal\content_change_status_send_mail\Hook;
 
 use Drupal\Core\Entity\RevisionableStorageInterface;
 use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\Core\Mail\MailManagerInterface;
 use Drupal\node\NodeInterface;
 
 class MailTriggerHooks {
@@ -11,29 +12,40 @@ class MailTriggerHooks {
   #[Hook('node_update')]
   public function entityUpdate(NodeInterface $entity) {
 
-    if ($this->getWorkflowMachinName($entity) == 'draft') return;
-
-    $mailManager = \Drupal::service('plugin.manager.mail');
+    if ($work_flow_machin_name = $this->getWorkflowMachinName($entity) == 'draft') return;
+    /** @var MailManagerInterface $mailManager */
+    $mail_manager = \Drupal::service('plugin.manager.mail');
     $langcode = \Drupal::currentUser()->getPreferredLangcode();
+
+    match ($work_flow_machin_name) {
+      'published' => $this->rejectMail($entity, $mail_manager),
+      'unpublished' => $this->rejectMail($entity, $mail_manager),
+      'pending_approval' => $this->rejectMail($entity, $mail_manager),
+      'reject' => $this->rejectMail($entity, $mail_manager),
+      default => $this->rejectMail($entity, $mail_manager)
+    };
+  }
+
+  private function rejectMail(NodeInterface $entity, MailManagerInterface $mail_manager) {
     $params['subject'] = $entity->label();
     $params['message'] = <<<TEXT
       {$this->getWorkflowDispName($entity)}
 
-      test １つ前のリビジョンタイトル
-      {$this->getPreviousRevisionNode($entity)->label()}
-
-      送信者
-      {$entity->getRevisionUser()->getDisplayName()}
+      {$entity->getRevisionUser()->getDisplayName()} から、ワークフローが差し戻されました。
+      内容の確認をお願いします。
 
       対象コンテンツ編集画面
       {$entity->toUrl('edit-form', ['absolute' => TRUE])->toString()}
+
+      メッセージ
+      ここにリビジョンメッセージ乗せる
     TEXT;
 
-    $mailManager->mail(
+    $mail_manager->mail(
       'content_change_status_send_mail',
       'content_moderation_notification',
-      'example@example.com',
-      $langcode,
+      $this->getPreviousRevisionNode($entity)->getRevisionUser()->getEmail(),
+      'ja',
       $params
     );
   }
@@ -68,7 +80,7 @@ class MailTriggerHooks {
 
   /**
    * 1つ前のリビジョンを取得する
-   * @return string 差し戻し対象コンテンツのリビジョン
+   * @return NodeInterface 差し戻し対象コンテンツのリビジョン
    */
   private function getPreviousRevisionNode(NodeInterface $entity) {
     /** @var RevisionableStorageInterface */

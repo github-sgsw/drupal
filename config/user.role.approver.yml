@@ -7,13 +7,18 @@ dependencies:
   module:
     - content_moderation
     - media
+    - node
+    - storage
 id: approver
 label: approver
 weight: 3
 is_admin: false
 permissions:
+  - 'delete all revisions'
   - 'delete any media'
   - 'delete media'
+  - 'delete own storage entities'
+  - 'delete storage entities'
   - 'use default transition publish'
   - 'use default transition reject'
   - 'use default transition unpublish'
