@@ -2,13 +2,13 @@
 
 namespace Drupal\content_change_status_send_mail\Hook;
 
-use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Entity\RevisionableEntityStorageInterface;
+use Drupal\Core\Entity\RevisionableStorageInterface;
 use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\node\NodeInterface;
 
 class MailTriggerHooks {
   #[Hook('node_update')]
-  public function entityUpdate(EntityInterface $entity) {
+  public function entityUpdate(NodeInterface $entity) {
     $mailManager = \Drupal::service('plugin.manager.mail');
     $langcode = \Drupal::currentUser()->getPreferredLangcode();
     $params['subject'] = $entity->label();
@@ -39,17 +39,16 @@ class MailTriggerHooks {
     $options = [
       'langcode' => $message['langcode'],
     ];
-    $message['to'] = 'example@example.com';
     $message['from'] = \Drupal::config('system.site')->get('mail');
     $message['subject'] = t('@subject', ['@subject' => $params['subject']], $options);
     $message['body'][] = $params['message'];
   }
 
   /**
-   * @param EntityInterface $entity ワークフロー対象コンテンツ
+   * @param NodeInterface $entity ワークフロー対象コンテンツ
    * @return string ワークフローの概要
    */
-  private function subject(EntityInterface $entity) {
+  private function subject(NodeInterface $entity) {
     $workflow_machin_name = $entity->get('moderation_state')->value;
     $workflow_displaf_name = \Drupal::service('content_moderation.moderation_information')
       ->getWorkflowForEntity($entity)
@@ -67,7 +66,8 @@ class MailTriggerHooks {
    * 1つ前のリビジョンを取得する
    * @return string 差し戻し対象コンテンツのリビジョン
    */
-  private function getPreviousRevisionNode(EntityInterface $entity) {
+  private function getPreviousRevisionNode(NodeInterface $entity) {
+    /** @var RevisionableStorageInterface */
     $node_storage = \Drupal::entityTypeManager()->getStorage('node');
     return $node_storage->getQuery()
       ->accessCheck()
