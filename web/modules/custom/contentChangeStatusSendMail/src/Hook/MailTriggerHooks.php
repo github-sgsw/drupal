@@ -8,12 +8,12 @@ use Drupal\Core\Hook\Attribute\Hook;
 class MailTriggerHooks {
   #[Hook('node_update')]
   public function entity_update(EntityInterface $entity) {
-    \Drupal::logger('custom_mail_module')->notice('yahho');
     $mailManager = \Drupal::service('plugin.manager.mail');
     $langcode = \Drupal::currentUser()->getPreferredLangcode();
     $params['subject'] = $entity->label();
     $params['message'] = <<<TEXT
       {$entity->getRevisionUser()->getDisplayName()}
+      {$this->subject($entity)}
       {$entity->toUrl('edit-form', ['absolute' => TRUE])->toString()}
     TEXT;
 
@@ -35,6 +35,20 @@ class MailTriggerHooks {
     $message['from'] = \Drupal::config('system.site')->get('mail');
     $message['subject'] = t('@subject', ['@subject' => $params['subject']], $options);
     $message['body'][] = $params['message'];
+  }
+
+  private function subject(EntityInterface $entity) {
+    $workflow_machin_name = $entity->get('moderation_state')->value;
+    $workflow_displaf_name = \Drupal::service('content_moderation.moderation_information')
+      ->getWorkflowForEntity($entity)
+      ->getTypePlugin()
+      ->getState($workflow_machin_name)
+      ->label();
+    return match ($workflow_machin_name) {
+      'published' => "が{$workflow_displaf_name}されました。",
+      'unpublished' => "が{$workflow_displaf_name}になりました。",
+      'pending_approval', 'reject' => "{$workflow_displaf_name}のワークフローが届きました。"
+    };
   }
 }
 
