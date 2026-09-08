@@ -6,7 +6,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 
 class MailTriggerHooks {
-  #[Hook('entity_update')]
+  #[Hook('node_update')]
   public function entity_update(EntityInterface $entity) {
     \Drupal::logger('custom_mail_module')->notice('yahho');
     $mailManager = \Drupal::service('plugin.manager.mail');
