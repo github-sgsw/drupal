@@ -12,7 +12,10 @@ class MailTriggerHooks {
     $mailManager = \Drupal::service('plugin.manager.mail');
     $langcode = \Drupal::currentUser()->getPreferredLangcode();
     $params['subject'] = $entity->label();
-    $params['message'] = 'test送信';
+    $params['message'] = <<<TEXT
+      {$entity->getRevisionUser()->getDisplayName()}
+      {$entity->toUrl('edit-form', ['absolute' => TRUE])->toString()}
+    TEXT;
 
     $mailManager->mail(
       'content_change_status_send_mail',
