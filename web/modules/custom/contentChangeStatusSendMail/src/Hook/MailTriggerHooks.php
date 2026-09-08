@@ -8,7 +8,7 @@ use Drupal\Core\Hook\Attribute\Hook;
 
 class MailTriggerHooks {
   #[Hook('node_update')]
-  public function entity_update(EntityInterface $entity) {
+  public function entityUpdate(EntityInterface $entity) {
     $mailManager = \Drupal::service('plugin.manager.mail');
     $langcode = \Drupal::currentUser()->getPreferredLangcode();
     $params['subject'] = $entity->label();
@@ -35,7 +35,7 @@ class MailTriggerHooks {
   }
 
   #[Hook('mail')]
-  function send_mail($key, &$message, $params) {
+  function sendMail($key, &$message, $params) {
     $options = [
       'langcode' => $message['langcode'],
     ];
