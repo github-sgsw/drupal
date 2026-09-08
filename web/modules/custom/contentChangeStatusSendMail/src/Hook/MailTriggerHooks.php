@@ -3,6 +3,7 @@
 namespace Drupal\content_change_status_send_mail\Hook;
 
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\RevisionableEntityStorageInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 
 class MailTriggerHooks {
@@ -12,8 +13,15 @@ class MailTriggerHooks {
     $langcode = \Drupal::currentUser()->getPreferredLangcode();
     $params['subject'] = $entity->label();
     $params['message'] = <<<TEXT
-      {$entity->getRevisionUser()->getDisplayName()}
       {$this->subject($entity)}
+
+      test １つ前のリビジョンタイトル
+      {$this->getPreviousRevisionNode($entity)->label()}
+
+      送信者
+      {$entity->getRevisionUser()->getDisplayName()}
+
+      対象コンテンツ編集画面
       {$entity->toUrl('edit-form', ['absolute' => TRUE])->toString()}
     TEXT;
 
@@ -37,6 +45,10 @@ class MailTriggerHooks {
     $message['body'][] = $params['message'];
   }
 
+  /**
+   * @param EntityInterface $entity ワークフロー対象コンテンツ
+   * @return string ワークフローの概要
+   */
   private function subject(EntityInterface $entity) {
     $workflow_machin_name = $entity->get('moderation_state')->value;
     $workflow_displaf_name = \Drupal::service('content_moderation.moderation_information')
@@ -49,6 +61,24 @@ class MailTriggerHooks {
       'unpublished' => "が{$workflow_displaf_name}になりました。",
       'pending_approval', 'reject' => "{$workflow_displaf_name}のワークフローが届きました。"
     };
+  }
+
+  /**
+   * 1つ前のリビジョンを取得する
+   * @return string 差し戻し対象コンテンツのリビジョン
+   */
+  private function getPreviousRevisionNode(EntityInterface $entity) {
+    $node_storage = \Drupal::entityTypeManager()->getStorage('node');
+    return $node_storage->getQuery()
+      ->accessCheck()
+      ->allRevisions()
+      ->condition('nid', $entity->id())
+      ->condition('vid', $entity->getRevisionId(), '<')
+      ->sort('vid', 'DESC')
+      ->range(0, 1)
+      ->execute()
+      |> key(...)
+      |> $node_storage->loadRevision(...);
   }
 }
 
