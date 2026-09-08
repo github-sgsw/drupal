@@ -4,10 +4,15 @@ status: true
 dependencies:
   config:
     - node.type.news
+    - workflows.workflow.default
   module:
+    - content_moderation
     - content_translation
+    - file
     - media
     - node
+    - paragraphs
+    - storage
     - system
 _core:
   default_config_hash: dJ0L2DNSj5q6XVZAGsuVDpJTh5UeYkIPwKrUOOpr8YI
@@ -17,6 +22,10 @@ weight: 1
 is_admin: false
 permissions:
   - 'access content'
+  - 'access content overview'
+  - 'access files overview'
+  - 'access site in maintenance mode'
+  - 'create media'
   - 'create news content'
   - 'delete any news content'
   - 'delete news revisions'
@@ -25,5 +34,15 @@ permissions:
   - 'edit own news content'
   - 'revert news revisions'
   - 'translate news node'
+  - 'update any media'
+  - 'update media'
+  - 'use default transition create_new_draft'
+  - 'use default transition pending_approval'
+  - 'view all media revisions'
+  - 'view any unpublished content'
+  - 'view latest version'
   - 'view media'
   - 'view news revisions'
+  - 'view own unpublished media'
+  - 'view own unpublished storage entities'
+  - 'view unpublished paragraphs'

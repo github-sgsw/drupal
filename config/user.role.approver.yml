@@ -1,0 +1,19 @@
+uuid: 43578ed4-8702-4516-aedb-36011fcb899c
+langcode: ja
+status: true
+dependencies:
+  config:
+    - workflows.workflow.default
+  module:
+    - content_moderation
+    - media
+id: approver
+label: approver
+weight: 3
+is_admin: false
+permissions:
+  - 'delete any media'
+  - 'delete media'
+  - 'use default transition publish'
+  - 'use default transition reject'
+  - 'use default transition unpublish'

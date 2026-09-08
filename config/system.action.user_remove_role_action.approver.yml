@@ -1,0 +1,14 @@
+uuid: 4df9af90-d607-4915-b58e-40b9f17b2e24
+langcode: ja
+status: true
+dependencies:
+  config:
+    - user.role.approver
+  module:
+    - user
+id: user_remove_role_action.approver
+label: '選択したユーザーから approver の役割を削除'
+type: user
+plugin: user_remove_role_action
+configuration:
+  rid: approver

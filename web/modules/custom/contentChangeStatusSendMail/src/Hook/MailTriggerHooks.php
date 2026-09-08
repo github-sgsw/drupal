@@ -11,10 +11,10 @@ class MailTriggerHooks {
     \Drupal::logger('custom_mail_module')->notice('yahho');
     $mailManager = \Drupal::service('plugin.manager.mail');
     $langcode = \Drupal::currentUser()->getPreferredLangcode();
-    $params['subject'] = 'さぶじぇくと';
+    $params['subject'] = $entity->label();
     $params['message'] = 'test送信';
 
-    $result = $mailManager->mail(
+    $mailManager->mail(
       'content_change_status_send_mail',
       'content_moderation_notification',
       'example@example.com',
@@ -28,7 +28,7 @@ class MailTriggerHooks {
     $options = [
       'langcode' => $message['langcode'],
     ];
-    $message['to'] = 'p20prosugi@gmail.com';
+    $message['to'] = 'example@example.com';
     $message['from'] = \Drupal::config('system.site')->get('mail');
     $message['subject'] = t('@subject', ['@subject' => $params['subject']], $options);
     $message['body'][] = $params['message'];

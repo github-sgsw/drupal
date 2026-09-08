@@ -4,6 +4,7 @@ status: true
 dependencies:
   module:
     - media
+    - storage
     - system
 _core:
   default_config_hash: j5zLMOdJBqC0bMvSdth5UebkprJB8g_2FXHqhfpJzow
@@ -14,3 +15,4 @@ is_admin: false
 permissions:
   - 'access content'
   - 'view media'
+  - 'view published storage entities'

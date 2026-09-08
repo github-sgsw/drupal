@@ -1,0 +1,14 @@
+uuid: cb84f33c-e5a2-4761-9783-8b79d59b06e4
+langcode: ja
+status: true
+dependencies:
+  config:
+    - user.role.approver
+  module:
+    - user
+id: user_add_role_action.approver
+label: 選択したユーザーにapproverの役割を追加
+type: user
+plugin: user_add_role_action
+configuration:
+  rid: approver

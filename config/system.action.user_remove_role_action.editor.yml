@@ -1,0 +1,14 @@
+uuid: dae6b366-ce37-4bda-96a0-a65964e892e5
+langcode: ja
+status: true
+dependencies:
+  config:
+    - user.role.editor
+  module:
+    - user
+id: user_remove_role_action.editor
+label: '選択したユーザーから editor の役割を削除'
+type: user
+plugin: user_remove_role_action
+configuration:
+  rid: editor

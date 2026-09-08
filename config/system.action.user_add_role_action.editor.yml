@@ -1,0 +1,14 @@
+uuid: 9c5f1469-1e9e-4ee8-8a4f-02ad1e178c1b
+langcode: ja
+status: true
+dependencies:
+  config:
+    - user.role.editor
+  module:
+    - user
+id: user_add_role_action.editor
+label: 選択したユーザーにeditorの役割を追加
+type: user
+plugin: user_add_role_action
+configuration:
+  rid: editor
