@@ -41,6 +41,7 @@ type_settings:
       label: 一時保存
       from:
         - draft
+        - pending_approval
         - published
         - unpublished
       to: draft
@@ -59,7 +60,6 @@ type_settings:
       from:
         - draft
         - pending_approval
-        - published
       to: published
       weight: 1
     reject:

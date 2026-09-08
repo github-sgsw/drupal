@@ -7,13 +7,17 @@ use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\node\NodeInterface;
 
 class MailTriggerHooks {
+
   #[Hook('node_update')]
   public function entityUpdate(NodeInterface $entity) {
+
+    if ($this->getWorkflowMachinName($entity) == 'draft') return;
+
     $mailManager = \Drupal::service('plugin.manager.mail');
     $langcode = \Drupal::currentUser()->getPreferredLangcode();
     $params['subject'] = $entity->label();
     $params['message'] = <<<TEXT
-      {$this->subject($entity)}
+      {$this->getWorkflowDispName($entity)}
 
       test １つ前のリビジョンタイトル
       {$this->getPreviousRevisionNode($entity)->label()}
@@ -45,21 +49,21 @@ class MailTriggerHooks {
   }
 
   /**
-   * @param NodeInterface $entity ワークフロー対象コンテンツ
-   * @return string ワークフローの概要
+   * @return string ワークフローステータスのシステム内部名称
    */
-  private function subject(NodeInterface $entity) {
-    $workflow_machin_name = $entity->get('moderation_state')->value;
-    $workflow_displaf_name = \Drupal::service('content_moderation.moderation_information')
+  private function getWorkflowMachinName(NodeInterface $entity) {
+    return $entity->get('moderation_state')->value;
+  }
+
+  /**
+   * @return string ワークフローステータスの表示ラベル
+   */
+  private function getWorkflowDispName(NodeInterface $entity) {
+    return \Drupal::service('content_moderation.moderation_information')
       ->getWorkflowForEntity($entity)
       ->getTypePlugin()
-      ->getState($workflow_machin_name)
+      ->getState($this->getWorkflowMachinName($entity))
       ->label();
-    return match ($workflow_machin_name) {
-      'published' => "が{$workflow_displaf_name}されました。",
-      'unpublished' => "が{$workflow_displaf_name}になりました。",
-      'pending_approval', 'reject' => "{$workflow_displaf_name}のワークフローが届きました。"
-    };
   }
 
   /**
