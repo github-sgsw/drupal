@@ -56,24 +56,10 @@ class MailTriggerHooks {
    * コンテンツの公開権限を持つユーザーのみに承認待ちメールを送付する
    */
   private function pendingApprovalMail(NodeInterface $entity, MailManagerInterface $mail_manager, $params) {
-    $roles = \Drupal::entityTypeManager()->getStorage('user_role')->loadMultiple();
-    $target_permission = 'use default transition publish';
 
-    $matching_roles = array_filter($roles, function ($role) use ($target_permission) {
-      /** @var \Drupal\user\RoleInterface $role */
-      return $role->hasPermission($target_permission);
-    });
-
-    $role_ids = array_keys($matching_roles);
-
-    $uids = \Drupal::entityTypeManager()->getStorage('user')
-      ->getQuery()
-      ->accessCheck()
-      ->condition('status', 1)
-      ->condition('roles', array_values($role_ids), 'IN')
-      ->execute();
-
-    $users = \Drupal::entityTypeManager()->getStorage('user')->loadMultiple($uids);
+    $users = $this->getPermissionRole('use default transition publish')
+        |> $this->getRoleUser(...)
+        |>\Drupal::entityTypeManager()->getStorage('user')->loadMultiple(...);
 
     $mail_manager->mail(
       'content_change_status_send_mail',
@@ -82,6 +68,30 @@ class MailTriggerHooks {
       'ja',
       $params
     );
+  }
+
+  /**
+   * @param String $permission 権限名
+   * @return array 特定の権限を所有するロール
+   */
+  private function getPermissionRole(String $permission) {
+    $roles = \Drupal::entityTypeManager()->getStorage('user_role')->loadMultiple();
+    return array_filter($roles, function ($role) use ($permission) {
+      /** @var \Drupal\user\RoleInterface $role */
+      return $role->hasPermission($permission);
+    });
+  }
+
+  /**
+   * @return array ロールに紐づくユーザー
+   */
+  private function getRoleUser(array $roles) {
+    return \Drupal::entityTypeManager()->getStorage('user')
+      ->getQuery()
+      ->accessCheck()
+      ->condition('status', 1)
+      ->condition('roles', array_values(array_keys($roles)), 'IN')
+      ->execute();
   }
 
   #[Hook('mail')]
