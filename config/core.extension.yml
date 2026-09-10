@@ -1,6 +1,7 @@
 _core:
   default_config_hash: R4IF-ClDHXxblLcG0L7MgsLvfBIMAvi_skumNFQwkDc
 module:
+  add_status_element_for_node_translation_view: 0
   block: 0
   breakpoint: 0
   ckeditor5: 0

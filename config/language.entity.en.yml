@@ -1,0 +1,9 @@
+uuid: d3fa26f6-a100-45c9-b504-5cc3ecbb2801
+langcode: ja
+status: true
+dependencies: {  }
+id: en
+label: 英語
+direction: ltr
+weight: 1
+locked: false

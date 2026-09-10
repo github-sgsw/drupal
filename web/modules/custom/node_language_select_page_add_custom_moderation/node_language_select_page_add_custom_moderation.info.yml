@@ -1,4 +1,0 @@
-name: Node Language Select Page Add Custom Moderation
-type: module
-description: 'ノードの言語選択画面で表示されるモデレーションがデフォルトのものしか表示されないため\nカスタムモデレーション要素を追加する'
-core_version_requirement: 10.x

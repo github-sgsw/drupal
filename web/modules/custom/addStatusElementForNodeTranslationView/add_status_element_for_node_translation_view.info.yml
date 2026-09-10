@@ -1,0 +1,4 @@
+name: Add Status Element For Nord Translation View
+type: module
+description: 'ノードの言語選択画面で表示されるモデレーションがデフォルトリビジョンしか表示されないため\nデフォルト以外のステータスも表示する'
+core_version_requirement: 11.x
