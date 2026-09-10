@@ -21,11 +21,9 @@ class addStatusElementForNodeTranslationView {
     $published_cell_index = 0;
     $add_array_index = 0;
 
-    /*
-      * thの名称の日本語訳がおかしいため書き換える。管理画面の話なので直で日本語を入れる。
-      * 状態 -> 公開
-      * 翻訳 -> タイトル
-    */
+    // thの名称の日本語訳がおかしいため書き換える。管理画面の話なので直で日本語を入れる。
+    // 状態 -> 公開
+    // 翻訳 -> タイトル
     foreach ($variables['header'] as $index => $th) {
       /** @var \Drupal\Core\StringTranslation\TranslatableMarkup $th_class */
       $th_class = $th["content"];
@@ -51,10 +49,8 @@ class addStatusElementForNodeTranslationView {
       }
     }
 
-    /*
-     * パスからnidを取得してノードをロード
-     * カスタムモデレーションのラベルセットして配列に追加
-    */
+    // パスからnidを取得してノードをロード
+    //カスタムモデレーションのラベルセットして配列に追加
 
     foreach (array_map(null, $variables['rows'], \Drupal::languageManager()->getLanguages()) as $index => [$tr, $language]) {
       $entity = \Drupal::routeMatch()->getParameter('node');
@@ -63,12 +59,9 @@ class addStatusElementForNodeTranslationView {
       $default_node = NodeInterface::load($matches[1]);
 
       if ($default_node?->hasTranslation($language->getId())) {
-        /*
-         * 最新リビジョンのモデレーションステータスを見て公開・非公開を表示させているため
-         * デフォルトリビジョンの公開・非公開を取得し、上書きする
-        */
+        // 最新リビジョンのモデレーションステータスを見て公開・非公開を表示させているため
+        // デフォルトリビジョンの公開・非公開を取得し、上書きする
         $default_node = $default_node->getTranslation($language->getId());
-        /** @var \Drupal\Core\StringTranslation\TranslatableMarkup $add_td_custom_moderation */
         $published_cell_td = [
           'tag' => 'td',
           'attributes' => new \Drupal\Core\Template\Attribute(),
@@ -84,11 +77,8 @@ class addStatusElementForNodeTranslationView {
 
         $variables['rows'][$index]['cells'][$published_cell_index] = $published_cell_td;
 
-        /*
-         * 最新リビジョンのステータスを取得し
-         * $variables['header']に追加したカラムに入れる
-         */
-
+        // 最新リビジョンのステータスを取得し
+        // $variables['header']に追加したカラムに入れる
         $storage = \Drupal::service('entity_type.manager')->getStorage('node');
         $latest_vid = $storage->getLatestTranslationAffectedRevisionId($matches[1], $language->getId());
         $latest_revision_node = $storage->loadRevision($latest_vid);
@@ -97,7 +87,7 @@ class addStatusElementForNodeTranslationView {
 
       }
 
-      /** @var \Drupal\Core\StringTranslation\TranslatableMarkup $add_td_custom_moderation */
+      /** @var TranslatableMarkup $add_td_custom_moderation */
       $add_td_custom_moderation = [
         [
           'tag' => 'td',
