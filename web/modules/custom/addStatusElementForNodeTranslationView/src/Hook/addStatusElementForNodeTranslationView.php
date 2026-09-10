@@ -2,27 +2,47 @@
 
 namespace Drupal\add_status_element_for_node_translation_view\Hook;
 
+use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Language\LanguageInterface;
+use Drupal\Core\Language\LanguageManagerInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Template\Attribute;
 use Drupal\node\NodeInterface;
+use Drupal\node\NodeStorageInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class addStatusElementForNodeTranslationView {
+class addStatusElementForNodeTranslationView implements ContainerInjectionInterface {
+
+  public function __construct(
+    protected readonly RouteMatchInterface $routeMatch,
+    protected readonly LanguageManagerInterface $languageManager,
+    protected readonly EntityTypeManagerInterface $entityTypeManager
+  ) {}
+
+  public static function create(ContainerInterface $container): static {
+    return new static(
+      $container->get('current_route_match'),
+      $container->get('language_manager'),
+      $container->get('entity_type.manager')
+    );
+  }
 
   #[Hook('preprocess_table')]
   public function node_language_select_page_add_custom_moderation_preprocess_table(&$variables): void {
-    $route_match = \Drupal::routeMatch();
-    if ($route_match->getRouteName() !== 'entity.node.content_translation_overview') return;
+    if ($this->routeMatch->getRouteName() !== 'entity.node.content_translation_overview') return;
 
-    $node = $route_match->getParameter('node');
+    $node = $this->routeMatch->getParameter('node');
     if (!$node instanceof NodeInterface) return;
 
     [$updated_header, $published_cell_index, $add_array_index] = $this->transformHeaders($variables['header']);
     $variables['header'] = $updated_header;
 
-    $languages = array_values(\Drupal::languageManager()->getLanguages());
-    $node_storage = \Drupal::entityTypeManager()->getStorage('node');
+    $languages = array_values($this->languageManager->getLanguages());
+    /** @var \Drupal\node\NodeStorageInterface $node_storage */
+    $node_storage = $this->entityTypeManager->getStorage('node');
 
     $variables['rows'] = array_map(
       fn(array $row, LanguageInterface $language) => $this->transformRow(
@@ -38,6 +58,9 @@ class addStatusElementForNodeTranslationView {
     );
   }
 
+  /**
+   * ヘッダー配列の変換
+   */
   private function transformHeaders(array $headers): array {
     $published_cell_index = 0;
     $add_array_index = 0;
@@ -76,7 +99,7 @@ class addStatusElementForNodeTranslationView {
     array $row,
     LanguageInterface $language,
     int|string $nid,
-    $node_storage,
+    NodeStorageInterface $node_storage,
     int $published_cell_index,
     int $add_array_index
   ): array {
@@ -89,7 +112,7 @@ class addStatusElementForNodeTranslationView {
     if ($default_node?->hasTranslation($language->getId())) {
       $translated_node = $default_node->getTranslation($language->getId());
 
-      // 公開状態セルを置き換え
+      // 公開状態セルの置き換え
       $cells[$published_cell_index] = $this->createPublishedCell($translated_node);
 
       // モデレーションステータス取得
@@ -107,6 +130,9 @@ class addStatusElementForNodeTranslationView {
     return $row;
   }
 
+  /**
+   * 配列の特定位置へ要素を挿入）
+   */
   private function arrayInsert(array $array, int $index, array $insert): array {
     return array_merge(
       array_slice($array, 0, $index),
