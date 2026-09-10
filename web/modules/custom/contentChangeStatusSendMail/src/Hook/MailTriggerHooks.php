@@ -2,22 +2,46 @@
 
 namespace Drupal\content_change_status_send_mail\Hook;
 
-use Drupal\Core\Entity\RevisionableStorageInterface;
+use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Mail\MailManagerInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\content_moderation\ModerationInformationInterface;
 use Drupal\node\NodeInterface;
+use Drupal\user\RoleInterface;
+use Drupal\user\UserInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class MailTriggerHooks {
+class MailTriggerHooks implements ContainerInjectionInterface {
+
+  use StringTranslationTrait;
+
+  public function __construct(
+    protected EntityTypeManagerInterface $entity_type_manager,
+    protected MailManagerInterface $mail_manager,
+    protected ModerationInformationInterface $moderation_information,
+    protected LanguageManagerInterface $language_manager,
+    protected AccountInterface $current_user,
+  ) {}
+
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('entity_type.manager'),
+      $container->get('plugin.manager.mail'),
+      $container->get('content_moderation.moderation_information'),
+      $container->get('language_manager'),
+      $container->get('current_user')
+    );
+  }
 
   #[Hook('node_update')]
   public function entityUpdate(NodeInterface $entity) {
     $work_flow_machin_name = $this->getWorkflowMachinName($entity);
 
     if ($work_flow_machin_name == 'draft') return;
-
-    /** @var MailManagerInterface $mailManager */
-    $mail_manager = \Drupal::service('plugin.manager.mail');
-    $langcode = \Drupal::currentUser()->getPreferredLangcode();
 
     $params['subject'] = $entity->label();
     $params['message'] = <<<TEXT
@@ -34,16 +58,16 @@ class MailTriggerHooks {
     TEXT;
 
     match ($work_flow_machin_name) {
-      'published' => $this->rejectMail($entity, $mail_manager, $params),
-      'unpublished' => $this->rejectMail($entity, $mail_manager, $params),
-      'pending_approval' => $this->pendingApprovalMail($entity, $mail_manager, $params),
-      'reject' => $this->rejectMail($entity, $mail_manager, $params),
-      default => $this->rejectMail($entity, $mail_manager, $params)
+      'published' => $this->rejectMail($entity, $params),
+      'unpublished' => $this->rejectMail($entity, $params),
+      'pending_approval' => $this->pendingApprovalMail($params),
+      'reject' => $this->rejectMail($entity, $params),
+      default => $this->rejectMail($entity, $params)
     };
   }
 
-  private function rejectMail(NodeInterface $entity, MailManagerInterface $mail_manager, $params) {
-    $mail_manager->mail(
+  private function rejectMail(NodeInterface $entity, array $params) {
+    $this->mail_manager->mail(
       'content_change_status_send_mail',
       'content_moderation_notification',
       $this->getPreviousRevisionNode($entity)->getRevisionUser()->getEmail(),
@@ -55,13 +79,12 @@ class MailTriggerHooks {
   /**
    * コンテンツの公開権限を持つユーザーのみに承認待ちメールを送付する
    */
-  private function pendingApprovalMail(NodeInterface $entity, MailManagerInterface $mail_manager, $params) {
-
+  private function pendingApprovalMail(array $params) {
     $users = $this->getPermissionRole('use default transition publish')
         |> $this->getRoleUser(...)
-        |>\Drupal::entityTypeManager()->getStorage('user')->loadMultiple(...);
+        |> $this->entity_type_manager->getStorage('user')->loadMultiple(...);
 
-    $mail_manager->mail(
+    $this->mail_manager->mail(
       'content_change_status_send_mail',
       'content_moderation_notification',
       implode(',', array_map(fn($user) => $user->getEmail(), $users)),
@@ -72,10 +95,10 @@ class MailTriggerHooks {
 
   /**
    * @param String $permission 権限名
-   * @return array 特定の権限を所有するロール
+   * @return RoleInterface[] 特定の権限を所有するロール
    */
   private function getPermissionRole(String $permission) {
-    $roles = \Drupal::entityTypeManager()->getStorage('user_role')->loadMultiple();
+    $roles = $this->entity_type_manager->getStorage('user_role')->loadMultiple();
     return array_filter($roles, function ($role) use ($permission) {
       /** @var \Drupal\user\RoleInterface $role */
       return $role->hasPermission($permission);
@@ -83,10 +106,11 @@ class MailTriggerHooks {
   }
 
   /**
-   * @return array ロールに紐づくユーザー
+   * @param RoleInterface[] $roles ロール
+   * @return UserInterface[] ロールに紐づくユーザー
    */
   private function getRoleUser(array $roles) {
-    return \Drupal::entityTypeManager()->getStorage('user')
+    return $this->entity_type_manager->getStorage('user')
       ->getQuery()
       ->accessCheck()
       ->condition('status', 1)
@@ -100,7 +124,7 @@ class MailTriggerHooks {
       'langcode' => $message['langcode'],
     ];
     $message['from'] = \Drupal::config('system.site')->get('mail');
-    $message['subject'] = t('@subject', ['@subject' => $params['subject']], $options);
+    $message['subject'] = $this->t('@subject', ['@subject' => $params['subject']], $options);
     $message['body'][] = $params['message'];
   }
 
@@ -115,7 +139,7 @@ class MailTriggerHooks {
    * @return string ワークフローステータスの表示ラベル
    */
   private function getWorkflowDispName(NodeInterface $entity) {
-    return \Drupal::service('content_moderation.moderation_information')
+    return $this->moderation_information
       ->getWorkflowForEntity($entity)
       ->getTypePlugin()
       ->getState($this->getWorkflowMachinName($entity))
@@ -127,8 +151,7 @@ class MailTriggerHooks {
    * @return NodeInterface 差し戻し対象コンテンツのリビジョン
    */
   private function getPreviousRevisionNode(NodeInterface $entity) {
-    /** @var RevisionableStorageInterface */
-    $node_storage = \Drupal::entityTypeManager()->getStorage('node');
+    $node_storage = $this->entity_type_manager->getStorage('node');
     return $node_storage->getQuery()
       ->accessCheck()
       ->allRevisions()
