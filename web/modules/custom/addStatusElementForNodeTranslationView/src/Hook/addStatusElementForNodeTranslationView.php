@@ -30,28 +30,26 @@ class addStatusElementForNodeTranslationView {
 
       if ($th_class->getUntranslatedString() == 'Status') {
         $published_cell_index = $index;
-        $overrideClass = new TranslatableMarkup('公開');
-        $variables['header'][$published_cell_index]["content"] = $overrideClass;
+        $override_class = new TranslatableMarkup('公開');
+        $variables['header'][$published_cell_index]["content"] = $override_class;
 
         $add_th_custom_moderation = [
           [
             'tag' => 'th',
             'attributes' => new \Drupal\Core\Template\Attribute(),
-              'content' => new TranslatableMarkup('状態')
+            'content' => new TranslatableMarkup('状態')
           ]
         ];
         $add_array_index = $index + 1;
         array_splice($variables['header'], $add_array_index, 0, $add_th_custom_moderation);
-      }
-      if ($th_class->getUntranslatedString() == 'Translation') {
-        $overrideClass = new TranslatableMarkup('タイトル');
-        $variables['header'][$index]["content"] = $overrideClass;
+      } elseif ($th_class->getUntranslatedString() == 'Translation') {
+        $override_class = new TranslatableMarkup('タイトル');
+        $variables['header'][$index]["content"] = $override_class;
       }
     }
 
     // パスからnidを取得してノードをロード
     //カスタムモデレーションのラベルセットして配列に追加
-
     foreach (array_map(null, $variables['rows'], \Drupal::languageManager()->getLanguages()) as $index => [$tr, $language]) {
       $entity = \Drupal::routeMatch()->getParameter('node');
       $node_status = 'Not translated';
@@ -91,7 +89,7 @@ class addStatusElementForNodeTranslationView {
       $add_td_custom_moderation = [
         [
           'tag' => 'td',
-          'attributes' => new \Drupal\Core\Template\Attribute(),
+          'attributes' => new Attribute(),
           'content' => [
             '#type' => 'inline_template',
             '#template' => '<span class="status">'.t($node_status).'</span>{% if outdated %} <span class="marker">{{ "outdated"|t }}</span>{% endif %}',
