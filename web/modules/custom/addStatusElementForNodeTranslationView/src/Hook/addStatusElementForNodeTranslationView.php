@@ -9,100 +9,148 @@ use Drupal\Core\Template\Attribute;
 use Drupal\node\NodeInterface;
 
 class addStatusElementForNodeTranslationView {
-  #[Hook('preprocess_table')]
-  public function node_language_select_page_add_custom_moderation_preprocess_table(&$variables):void {
 
+  #[Hook('preprocess_table')]
+  public function node_language_select_page_add_custom_moderation_preprocess_table(&$variables): void {
     $route_match = \Drupal::routeMatch();
-    // 該当する翻訳一覧ページ（content_translation.local_tasks:entity.node.content_translation_overview）か判定
     if ($route_match->getRouteName() !== 'entity.node.content_translation_overview') return;
 
-    // 公開・非公開ラベルのカラムキーを保持 $published_cell_index
-    // 公開・非公開の右にカスタムモデレーションのカラムを追加するため要素のキーを保持 $add_array_index
+    $node = $route_match->getParameter('node');
+    if (!$node instanceof NodeInterface) return;
+
+    [$updated_header, $published_cell_index, $add_array_index] = $this->transformHeaders($variables['header']);
+    $variables['header'] = $updated_header;
+
+    $languages = array_values(\Drupal::languageManager()->getLanguages());
+    $node_storage = \Drupal::entityTypeManager()->getStorage('node');
+
+    $variables['rows'] = array_map(
+      fn(array $row, LanguageInterface $language) => $this->transformRow(
+        $row,
+        $language,
+        $node->id(),
+        $node_storage,
+        $published_cell_index,
+        $add_array_index
+      ),
+      $variables['rows'],
+      $languages
+    );
+  }
+
+  private function transformHeaders(array $headers): array {
     $published_cell_index = 0;
     $add_array_index = 0;
 
-    // thの名称の日本語訳がおかしいため書き換える。管理画面の話なので直で日本語を入れる。
-    // 状態 -> 公開
-    // 翻訳 -> タイトル
-    foreach ($variables['header'] as $index => $th) {
-      /** @var \Drupal\Core\StringTranslation\TranslatableMarkup $th_class */
-      $th_class = $th["content"];
+    $transformed = array_map(function ($index, $th) use (&$published_cell_index, &$add_array_index) {
+      /** @var TranslatableMarkup $th_class */
+      $th_class = $th['content'];
+      $untranslated = $th_class->getUntranslatedString();
 
-      if ($th_class->getUntranslatedString() == 'Status') {
+      if ($untranslated === 'Status') {
         $published_cell_index = $index;
-        $override_class = new TranslatableMarkup('公開');
-        $variables['header'][$published_cell_index]["content"] = $override_class;
-
-        $add_th_custom_moderation = [
-          [
-            'tag' => 'th',
-            'attributes' => new \Drupal\Core\Template\Attribute(),
-            'content' => new TranslatableMarkup('状態')
-          ]
-        ];
         $add_array_index = $index + 1;
-        array_splice($variables['header'], $add_array_index, 0, $add_th_custom_moderation);
-      } elseif ($th_class->getUntranslatedString() == 'Translation') {
-        $override_class = new TranslatableMarkup('タイトル');
-        $variables['header'][$index]["content"] = $override_class;
+        return array_merge($th, ['content' => new TranslatableMarkup('公開')]);
       }
-    }
-
-    // パスからnidを取得してノードをロード
-    //カスタムモデレーションのラベルセットして配列に追加
-    foreach (array_map(null, $variables['rows'], \Drupal::languageManager()->getLanguages()) as $index => [$tr, $language]) {
-      $entity = \Drupal::routeMatch()->getParameter('node');
-      $node_status = 'Not translated';
-
-      $default_node = NodeInterface::load($matches[1]);
-
-      if ($default_node?->hasTranslation($language->getId())) {
-        // 最新リビジョンのモデレーションステータスを見て公開・非公開を表示させているため
-        // デフォルトリビジョンの公開・非公開を取得し、上書きする
-        $default_node = $default_node->getTranslation($language->getId());
-        $published_cell_td = [
-          'tag' => 'td',
-          'attributes' => new \Drupal\Core\Template\Attribute(),
-          'content' => [
-            '#type' => 'inline_template',
-            '#template' => '<span class="status">{% if status %}{{ "Published"|t }}{% else %}{{ "Not published"|t }}{% endif %}</span>{% if outdated %}<span class="marker">{{ "outdated"|t }}</span>{% endif %}',
-            '#context' => [
-              'status' => $default_node->isPublished(),
-              'outdated' => FALSE
-            ]
-          ]
-        ];
-
-        $variables['rows'][$index]['cells'][$published_cell_index] = $published_cell_td;
-
-        // 最新リビジョンのステータスを取得し
-        // $variables['header']に追加したカラムに入れる
-        $storage = \Drupal::service('entity_type.manager')->getStorage('node');
-        $latest_vid = $storage->getLatestTranslationAffectedRevisionId($matches[1], $language->getId());
-        $latest_revision_node = $storage->loadRevision($latest_vid);
-
-        $node_status = $latest_revision_node->getTranslation($language->getId())->get('moderation_state')->getString();
-
+      if ($untranslated === 'Translation') {
+        return array_merge($th, ['content' => new TranslatableMarkup('タイトル')]);
       }
 
-      /** @var TranslatableMarkup $add_td_custom_moderation */
-      $add_td_custom_moderation = [
-        [
-          'tag' => 'td',
-          'attributes' => new Attribute(),
-          'content' => [
-            '#type' => 'inline_template',
-            '#template' => '<span class="status">'.t($node_status).'</span>{% if outdated %} <span class="marker">{{ "outdated"|t }}</span>{% endif %}',
-            '#context' => [
-              'status' => false,
-              'outdated' => false
-            ]
-          ]
-        ]
-      ];
+      return $th;
+    }, array_keys($headers), $headers);
 
-      array_splice($variables['rows'][$index]['cells'], $add_array_index, 0, $add_td_custom_moderation);
+    $custom_moderation_th = [
+      [
+        'tag' => 'th',
+        'attributes' => new Attribute(),
+        'content' => new TranslatableMarkup('状態'),
+      ],
+    ];
 
-    }
+    $final_headers = $this->arrayInsert($transformed, $add_array_index, $custom_moderation_th);
+
+    return [$final_headers, $published_cell_index, $add_array_index];
   }
+
+  private function transformRow(
+    array $row,
+    LanguageInterface $language,
+    int|string $nid,
+    $node_storage,
+    int $published_cell_index,
+    int $add_array_index
+  ): array {
+    $node_status = 'Not translated';
+    $cells = $row['cells'];
+
+    /** @var \Drupal\node\NodeInterface|null $default_node */
+    $default_node = $node_storage->load($nid);
+
+    if ($default_node?->hasTranslation($language->getId())) {
+      $translated_node = $default_node->getTranslation($language->getId());
+
+      // 公開状態セルを置き換え
+      $cells[$published_cell_index] = $this->createPublishedCell($translated_node);
+
+      // モデレーションステータス取得
+      $latest_vid = $node_storage->getLatestTranslationAffectedRevisionId($nid, $language->getId());
+      if ($latest_vid) {
+        /** @var \Drupal\node\NodeInterface $latest_revision_node */
+        $latest_revision_node = $node_storage->loadRevision($latest_vid);
+        $node_status = $latest_revision_node->getTranslation($language->getId())->get('moderation_state')->getString();
+      }
+    }
+
+    $moderation_cell = $this->createModerationCell($node_status);
+    $row['cells'] = $this->arrayInsert($cells, $add_array_index, $moderation_cell);
+
+    return $row;
+  }
+
+  private function arrayInsert(array $array, int $index, array $insert): array {
+    return array_merge(
+      array_slice($array, 0, $index),
+      $insert,
+      array_slice($array, $index)
+    );
+  }
+
+  /**
+   * デフォルトリビジョンの公開・非公開セル構造の生成
+   */
+  private function createPublishedCell(NodeInterface $node): array {
+    return [
+      'tag' => 'td',
+      'attributes' => new Attribute(),
+      'content' => [
+        '#type' => 'inline_template',
+        '#template' => '<span class="status">{% if status %}{{ "Published"|t }}{% else %}{{ "Not published"|t }}{% endif %}</span>{% if outdated %}<span class="marker">{{ "outdated"|t }}</span>{% endif %}',
+        '#context' => [
+          'status' => $node->isPublished(),
+          'outdated' => FALSE,
+        ],
+      ],
+    ];
+  }
+
+  /**
+   * モデレーションステータスのセル構造の生成
+   */
+  private function createModerationCell(string $node_status): array {
+    return [
+      [
+        'tag' => 'td',
+        'attributes' => new Attribute(),
+        'content' => [
+          '#type' => 'inline_template',
+          '#template' => '<span class="status">' . t($node_status) . '</span>{% if outdated %} <span class="marker">{{ "outdated"|t }}</span>{% endif %}',
+          '#context' => [
+            'status' => FALSE,
+            'outdated' => FALSE,
+          ],
+        ],
+      ],
+    ];
+  }
+
 }
