@@ -9,6 +9,7 @@ use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Template\Attribute;
 use Drupal\node\NodeInterface;
 use Drupal\node\NodeStorageInterface;
@@ -169,10 +170,11 @@ class addStatusElementForNodeTranslationView implements ContainerInjectionInterf
         'attributes' => new Attribute(),
         'content' => [
           '#type' => 'inline_template',
-          '#template' => '<span class="status">' . t($node_status) . '</span>{% if outdated %} <span class="marker">{{ "outdated"|t }}</span>{% endif %}',
+            '#template' => '<span class="status">{{ node_status | t }}</span>{% if outdated %} <span class="marker">{{ "outdated" | t }}</span>{% endif %}',
           '#context' => [
             'status' => FALSE,
             'outdated' => FALSE,
+            'node_status' => $node_status
           ],
         ],
       ],
