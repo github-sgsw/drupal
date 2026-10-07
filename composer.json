@@ -24,7 +24,7 @@
         "drupal/storage": "^1.4",
         "drupal/twig_tweak": "^3.4",
         "drupal/upgrade_status": "^4.3",
-        "drush/drush": "^13.6",
+        "drush/drush": "^13.8",
         "symfony/console": "^7"
     },
     "conflict": {
