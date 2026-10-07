@@ -80,6 +80,7 @@ class MailTriggerHooks implements ContainerInjectionInterface {
    * コンテンツの公開権限を持つユーザーのみに承認待ちメールを送付する
    */
   private function pendingApprovalMail(array $params) {
+    /** @var UserInterface[] $users */
     $users = $this->getPermissionRole('use default transition publish')
         |> $this->getRoleUser(...)
         |> $this->entity_type_manager->getStorage('user')->loadMultiple(...);
