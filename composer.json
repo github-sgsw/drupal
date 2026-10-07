@@ -17,9 +17,9 @@
     "require": {
         "chi-teck/drupal-code-generator": "^4@alpha",
         "composer/installers": "^2.0",
-        "drupal/core-composer-scaffold": "11.4.6",
-        "drupal/core-project-message": "11.4.6",
-        "drupal/core-recommended": "11.4.6",
+        "drupal/core-composer-scaffold": "11.4.8",
+        "drupal/core-project-message": "11.4.8",
+        "drupal/core-recommended": "11.4.8",
         "drupal/paragraphs": "^1.23",
         "drupal/storage": "^1.4",
         "drupal/twig_tweak": "^3.4",
